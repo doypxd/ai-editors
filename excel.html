@@ -1,63 +1,146 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Excel Copy</title>
-    <style>
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      th, td {
-        border: 1px solid black;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-    </style>
-  </head>
-  <body>
-    <table id="myTable">
-      <tr>
-        <th></th>
-        <th>Column 1</th>
-        <th>Column 2</th>
-      </tr>
-      <tr>
-        <td>Row 1</td>
-        <td contenteditable="true"></td>
-        <td contenteditable="true"></td>
-      </tr>
-      <tr>
-        <td>Row 2</td>
-        <td contenteditable="true"></td>
-        <td contenteditable="true"></td>
-      </tr>
-    </table>
-    <button onclick="addRow()">Add Row</button>
-    <button onclick="addColumn()">Add Column</button>
-    <script>
-      function addRow() {
-        var table = document.getElementById("myTable");
-        var row = table.insertRow(-1);
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        cell1.innerHTML = "New Row";
-        cell2.contentEditable = "true";
-        cell3.contentEditable = "true";
-      }
-      function addColumn() {
-        var table = document.getElementById("myTable");
-        var rowCount = table.rows.length;
-        for (var i = 0; i < rowCount; i++) {
-          var row = table.rows[i];
-          var cell = row.insertCell(-1);
-          cell.contentEditable = "true";
-        }
-      }
-    </script>
-  </body>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Excel Copy</title>
+<style>
+table {
+border-collapse: collapse;
+width: 100%;
+}
+
+th, td {
+border: 1px solid #ddd;
+padding: 8px;
+text-align: center;
+}
+
+th {
+background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+background-color: #f2f2f2;
+}
+
+.container {
+margin: 20px auto;
+width: 80%;
+}
+
+/* Add some styling for the action buttons */
+.actions {
+margin: 10px 0;
+}
+
+.button {
+background-color: #fff;
+border: 1px solid #ccc;
+padding: 5px 10px;
+margin-right: 10px;
+cursor: pointer;
+}
+
+.button:hover {
+background-color: #fafafa;
+border-color: #aaa;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Column 1</th>
+<th>Column 2</th>
+<th>Column 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Row 1</td>
+<td contentEditable="true"></td>
+<td contentEditable="true"></td>
+<td contentEditable="true"></td>
+</tr>
+<tr>
+<td>Row 2</td>
+<td contentEditable="true"></td>
+<td contentEditable="true"></td>
+<td contentEditable="true"></td>
+</tr>
+<tr>
+<td>Row 3</td>
+<td contentEditable="true"></td>
+<td contentEditable="true"></td>
+<td contentEditable="true"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="actions">
+<button id="bold" class="button">Bold</button>
+<button id="italic" class="button">Italic</button>
+<button id="underline" class="button">Underline</button>
+<button id="strike" class="button">Strike</button>
+</div>
+<script>
+// Store the table cell data in an array
+let tableData = [];
+
+// Get all the table cells and add event listeners
+let cells = 
+document.querySelectorAll('td[contenteditable="true"]');
+cells.forEach((cell) => {
+cell.addEventListener('input', (event) => {
+// Update the array with the latest input value
+let row = cell.parentNode.rowIndex;
+let col = cell.cellIndex - 1;
+tableData[row - 1][col] = event.target.innerHTML;
+});
+});
+
+// Initialize the array with empty values
+let numRows = document.querySelectorAll('tbody tr').length;
+let numCols = document.querySelectorAll('thead th').length - 1;
+for (let i = 0; i < numRows; i++) {
+tableData.push(new Array(numCols).fill(''));
+}
+
+// Add event listeners to the action buttons
+let boldButton = document.getElementById('bold');
+let italicButton = document.getElementById('italic');
+let underlineButton = document.getElementById('underline');
+let strikeButton = document.getElementById('strike');
+
+boldButton.addEventListener('click', () => {
+applyMarkup('b');
+});
+
+italicButton.addEventListener('click', () => {
+applyMarkup('i');
+});
+
+underlineButton.addEventListener('click', () => {
+applyMarkup('u');
+});
+
+strikeButton.addEventListener('click', () => {
+applyMarkup('s');
+});
+
+// Apply the selected markup to the selected text
+function applyMarkup(tag) {
+let selection = window.getSelection();
+if (selection.rangeCount) {
+let range = selection.getRangeAt(0);
+let markup = document.createElement(tag);
+markup.appendChild(range.extractContents());
+range.insertNode(markup);
+}
+}
+</script>
+</body>
 </html>
